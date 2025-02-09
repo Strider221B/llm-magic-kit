@@ -74,6 +74,7 @@ class LocalLLMHelper:
                 
             prompt = Prompts.get_prompt(question)
             response = self._model_wrapper.get_model_response(self._model, self._tokenizer, prompt)
+            response = response.removeprefix(prompt)
             return Prompts.extract_answer(response)
         except Exception as e:
             print(f"Error in get_answer: {str(e)}")
