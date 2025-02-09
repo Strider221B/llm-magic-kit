@@ -56,7 +56,7 @@ class LocalLLMHelper:
             answer = self.get_answer(question)
             
             # Return prediction in required format
-            return pd.DataFrame({'id': id_, 'answer': answer})
+            return pd.DataFrame({'id': [id_], 'answer': [answer]})
             
         except Exception as e:
             print(f"Prediction error for ID {id_}: {str(e)}")
