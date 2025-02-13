@@ -4,6 +4,7 @@ import pandas as pd
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, PreTrainedTokenizer
 
+from helpers.logger import Logger
 from models.constants import Constants
 from models.llm_model_wrapper import LLMModelWrapper
 from models.prompts import Prompts
@@ -54,6 +55,8 @@ class LocalLLMHelper:
             
             # Get answer using our question-answering pipeline
             answer = self.get_answer(question)
+
+            Logger.debug('*********', {'question': [question], 'answer': [answer]}, '\n')
             
             # Return prediction in required format
             return pd.DataFrame({'id': [id_], 'answer': [answer]})
