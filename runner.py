@@ -1,6 +1,6 @@
 
 from helpers.local_llm_helper import LocalLLMHelper
-from models.phi_basic import Phi
+from models.transformer_based.phi_basic import Phi
 
 class Runner:
 
