@@ -1,7 +1,7 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, PreTrainedTokenizer
 
-from models.constants import Constants
+from helpers.constants import Constants
 from models.llm_model_wrapper import LLMModelWrapper
 
 class ModelFactory:

@@ -1,10 +1,13 @@
 import torch
 
+from helpers.config import Config
+from helpers.constants import Constants
 from helpers.gpu_helper import GPUHelper
-from models.constants import Constants
 from models.llm_model_wrapper import LLMModelWrapper
 
 class Phi(LLMModelWrapper):
+
+    MODEL_PATH = f'{Config.BASE_PATH}/phi-2/pytorch/default/1'
 
     @staticmethod
     def get_model_response(model, tokenizer, prompt: str) -> str:

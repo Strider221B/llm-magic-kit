@@ -1,7 +1,7 @@
 import random
 import re
 
-from models.constants import Constants
+from helpers.constants import Constants
 
 class Prompts:
 

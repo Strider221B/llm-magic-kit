@@ -3,11 +3,11 @@ import time
 import pandas as pd
 import transformers
 
+from helpers.constants import Constants
 from helpers.logger import Logger
-from models.constants import Constants
 from models.llm_model_wrapper import LLMModelWrapper
 from models.prompts import Prompts
-from models.transformer_based.model_factory import ModelFactory
+from models.model_factory import ModelFactory
 
 #https://www.kaggle.com/code/sathyanarayanrao89/ai-mathematical-olympiad-phi2-basic/notebook
 
@@ -24,8 +24,8 @@ class LocalLLMHelper:
         '''
         transformers.set_seed(42)
         self._model_wrapper = model_wrapper
-        self._tokenizer = ModelFactory.get_tokenizer(self._model_wrapper)        
         self._model = ModelFactory.get_model(model_wrapper)
+        self._tokenizer = ModelFactory.get_tokenizer(self._model_wrapper, self._model)
     
     def predict(self, id_: pd.DataFrame, question: pd.DataFrame) -> pd.DataFrame:
         """Make a prediction.

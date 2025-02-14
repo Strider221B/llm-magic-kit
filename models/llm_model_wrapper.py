@@ -4,8 +4,7 @@ import torch
 
 class LLMModelWrapper(ABC):
 
-    BASE_FOLDER = '/kaggle/input'
-    MODEL_PATH = f'{BASE_FOLDER}/phi-2/pytorch/default/1'
+    MODEL_PATH = ''
     PAD_TOKEN = '</s>'
     PADDING_SIDE = 'left'
     TORCH_DTYPE = torch.float16
