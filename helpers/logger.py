@@ -1,3 +1,5 @@
+import traceback
+
 class Logger:
     '''
     For now just prints logs. Will update to use python logger or any other mechanism later as required.
@@ -22,3 +24,4 @@ class Logger:
     @staticmethod
     def exception(msg, *args, **kwargs):
         print(msg)
+        print(traceback.format_exc())

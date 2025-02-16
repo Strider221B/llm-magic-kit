@@ -3,6 +3,7 @@ import torch
 from helpers.config import Config
 from helpers.constants import Constants
 from helpers.gpu_helper import GPUHelper
+from helpers.logger import Logger
 from models.llm_model_wrapper import LLMModelWrapper
 
 class Phi(LLMModelWrapper):
@@ -33,5 +34,5 @@ class Phi(LLMModelWrapper):
             return response
             
         except Exception as e:
-            print(f"Generation error: {str(e)}")
+            Logger.exception(f"Generation error: {str(e)}")
             return f"Error occurred. Answer={Constants.DEFAULT_ANSWER}"

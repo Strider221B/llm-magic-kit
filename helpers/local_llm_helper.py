@@ -3,6 +3,7 @@ import time
 import pandas as pd
 import transformers
 
+from helpers.code_exec.python_formatter import PythonFormatter
 from helpers.constants import Constants
 from helpers.logger import Logger
 from models.llm_model_wrapper import LLMModelWrapper
@@ -49,7 +50,7 @@ class LocalLLMHelper:
             return pd.DataFrame({'id': [id_], 'answer': [answer]})
             
         except Exception as e:
-            print(f"Prediction error for ID {id_}: {str(e)}")
+            Logger.exception(f"Prediction error for ID {id_}: {str(e)}")
             # Return default prediction on error
             return pd.DataFrame({'id': id_, 'answer': Constants.DEFAULT_ANSWER})
 
@@ -61,11 +62,15 @@ class LocalLLMHelper:
             if time.time() > self._CUTOFF_TIME:
                 print("Time limit exceeded, returning default answer")
                 return Constants.DEFAULT_ANSWER
-                
+            
+            all_answers = []
             prompt = Prompts.get_prompt(question)
             response = self._model_wrapper.get_model_response(self._model, self._tokenizer, prompt)
             response = response.removeprefix(prompt)
-            return Prompts.extract_answer(response)
+            is_success, output = PythonFormatter.execute(response)
+            all_answers.extend(Prompts.extract_answer_from_python_output(is_success, output))
+            all_answers.append(Prompts.extract_answer(response))
+            return Prompts.select_most_common_answer(all_answers)
         except Exception as e:
-            print(f"Error in get_answer: {str(e)}")
+            Logger.exception(f"Error in get_answer: {str(e)}")
             return Constants.DEFAULT_ANSWER

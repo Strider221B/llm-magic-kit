@@ -1,9 +1,15 @@
 import random
 import re
+from collections import Counter
 
 from helpers.constants import Constants
+from helpers.logger import Logger
 
 class Prompts:
+
+    _REGEX_NUMBERS = r'-?\d+\.?\d*'
+    _VALID_ANS_MAX = 1000
+    _VALID_ANS_MIN = 0
 
     @staticmethod
     def get_prompt(question):
@@ -19,8 +25,8 @@ class Prompts:
         prompt = random.choice(prompts)
         return f"{prompt}.\n Question: {question} \n Solution: Let's solve this step by step: "
 
-    @staticmethod    
-    def extract_answer(response):
+    @classmethod    
+    def extract_answer(cls, response):
         """More robust answer extraction"""
         try:
             # Try multiple answer formats
@@ -30,15 +36,15 @@ class Prompts:
                 answer = response.split("\\boxed{")[-1].split("}")[0]
             elif "answer is" in response.lower():
                 text_after = response.lower().split("answer is")[-1]
-                numbers = re.findall(r'-?\d+\.?\d*', text_after)
+                numbers = re.findall(cls._REGEX_NUMBERS, text_after)
                 if numbers:
                     answer = numbers[0]
             else:
-                numbers = re.findall(r'-?\d+\.?\d*', response)
+                numbers = re.findall(cls._REGEX_NUMBERS, response)
                 if numbers:
                     answer = numbers[-1]
                 else:
-                    print(f'Could not get answer from: {response}, returning default {Constants.DEFAULT_ANSWER}')
+                    Logger.error(f'Could not get answer from: {response}, returning default {Constants.DEFAULT_ANSWER}')
                     return Constants.DEFAULT_ANSWER
                     
             # Handle negative numbers and convert to int modulo 1000
@@ -47,8 +53,35 @@ class Prompts:
                 value = abs(value)
             return int(value) % 1000
         except Exception as e:
-            print(f'Got exception in extract_answer from {response}. Exception: {e}, returning default {Constants.DEFAULT_ANSWER}')
+            Logger.exception(f'Got exception in extract_answer from {response}. Exception: {e}, returning default {Constants.DEFAULT_ANSWER}')
             return Constants.DEFAULT_ANSWER
+    
+    @classmethod
+    def select_most_common_answer(cls, answers):
+        valid_answers = []
+        for answer in answers:
+            try:
+                int_answer = int(answer)
+                if float(answer).is_integer():
+                    if cls._VALID_ANS_MIN <= int_answer <= cls._VALID_ANS_MAX:
+                        valid_answers.append(int_answer)
+            except:
+                pass
+        if not valid_answers:
+            Logger.error(f'No valid answer found in {answers}, returning default')
+            return Constants.DEFAULT_ANSWER
+        _, answer = sorted([(v,k) for k,v in Counter(valid_answers).items()], reverse=True)[0]
+        return answer%1000
+    
+    @classmethod
+    def extract_answer_from_python_output(cls, is_success: bool, output: str):
+        result = []
+        if is_success:
+            matches = re.findall(cls._REGEX_NUMBERS, output)
+            if matches:
+                for match in matches:
+                    result.append(int(match)%1000)
+        return result
         
 if __name__ == '__main__':
     example_response = '''Solution: Let's solve this step by step: 
