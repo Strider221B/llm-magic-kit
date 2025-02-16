@@ -1,9 +1,15 @@
+from helpers.config import Config
 from helpers.constants import Constants
 from helpers.logger import Logger
 from models.llm_model_wrapper import LLMModelWrapper
 from models.prompts import Prompts
 
 class BaseModel(LLMModelWrapper):
+
+    Config.MODEL_TYPE = Constants.VLLM
+
+    CUDA_VISIBLE_DEVICES = "0"
+    TENSOR_PARALLEL_SIZE = 1 # means that the model itself is split across multiple GPUs.
 
     _MAX_TOKENS = 32768
     _MIN_CUMULATIVE_PROB_NUCLEUS_SAMPLING = 0.01
@@ -27,7 +33,7 @@ class BaseModel(LLMModelWrapper):
                                                    add_generation_prompt=True)
             response = model.generate(prompts=[inputs],
                                       sampling_params=sampling_params)
-            return response.outputs[0].text
+            return response[0].outputs[0].text
             
         except Exception as e:
             Logger.exception(f"Generation error: {str(e)}")

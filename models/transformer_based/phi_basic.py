@@ -8,6 +8,7 @@ from models.llm_model_wrapper import LLMModelWrapper
 
 class Phi(LLMModelWrapper):
 
+    Config.MODEL_TYPE = Constants.TRANSFORMERS
     MODEL_PATH = f'{Config.BASE_PATH}/phi-2/pytorch/default/1'
 
     @staticmethod
