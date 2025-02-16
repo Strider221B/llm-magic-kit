@@ -1,7 +1,5 @@
 import os
 
-from vllm import LLM
-
 from helpers.constants import Constants
 from models.llm_model_wrapper import LLMModelWrapper
 
@@ -16,6 +14,7 @@ class ModelFactory:
     @classmethod
     def get_model(cls, 
                   model_wrapper: LLMModelWrapper):
+        from vllm import LLM
         cls._initialize()
         return LLM(model_wrapper.MODEL_PATH,
                    max_model_len=cls._MAX_MODEL_LEN,         
@@ -25,7 +24,7 @@ class ModelFactory:
     
     @classmethod
     def get_tokenizer(cls,
-                      llm_model: LLM = None):
+                      llm_model = None):
         
         return llm_model.get_tokenizer()
     

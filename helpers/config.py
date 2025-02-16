@@ -5,4 +5,4 @@ from helpers.constants import Constants
 class Config:
 
     BASE_PATH = cfg.BASE_FOLDER
-    MODEL_TYPE = Constants.VLLM
+    MODEL_TYPE = Constants.TRANSFORMERS
