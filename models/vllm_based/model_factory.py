@@ -1,6 +1,6 @@
 import os
 
-from helpers.constants import Constants
+from helpers.config import Config
 from models.vllm_based.base_model import BaseModel
 
 class ModelFactory:
@@ -20,8 +20,9 @@ class ModelFactory:
         return LLM(model_wrapper.MODEL_PATH,
                    max_model_len=cls._MAX_MODEL_LEN,         
                    trust_remote_code=cls._TRUST_REMOTE_CODE,     
-                   tensor_parallel_size=model_wrapper.TENSOR_PARALLEL_SIZE,      
-                   gpu_memory_utilization=cls._GPU_MEMORY_UTILIZATION)
+                   tensor_parallel_size=Config.TENSOR_PARALLEL_SIZE,      
+                   gpu_memory_utilization=cls._GPU_MEMORY_UTILIZATION,
+                   dtype=Config.TORCH_DTYPE)
     
     @classmethod
     def get_tokenizer(cls,

@@ -1,6 +1,7 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, PreTrainedTokenizer
 
+from helpers.config import Config
 from helpers.constants import Constants
 from models.llm_model_wrapper import LLMModelWrapper
 
@@ -10,19 +11,15 @@ class ModelFactory:
     _DEVICE_MAP = _AUTO if Constants.DEVICE == Constants.CUDA else None
     _LOCAL_FILES_ONLY=True
     _LOW_CPU_MEM_USAGE = True
-    _TORCH_DTYPE = torch.float16 if Constants.DEVICE == Constants.CUDA else torch.float32
     _TRUST_REMOTE_CODE=True
 
     @classmethod
     def get_model(cls, 
                   model_wrapper: LLMModelWrapper):
-        torch_dtype = model_wrapper.TORCH_DTYPE
-        if not torch_dtype:
-            torch_dtype = cls._TORCH_DTYPE
         model = AutoModelForCausalLM.from_pretrained(
                 model_wrapper.MODEL_PATH,
                 device_map=cls._DEVICE_MAP,
-                torch_dtype=torch_dtype,
+                torch_dtype=Config.TORCH_DTYPE,
                 trust_remote_code=cls._TRUST_REMOTE_CODE,
                 # low_cpu_mem_usage should be used with device map: 
                 # https://huggingface.co/docs/transformers/en/main_classes/model#transformers.PreTrainedModel.from_pretrained.low_cpu_mem_usage(bool,

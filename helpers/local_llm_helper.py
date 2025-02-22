@@ -5,6 +5,7 @@ import pandas as pd
 import transformers
 
 from helpers.code_exec.python_formatter import PythonFormatter
+from helpers.config import Config
 from helpers.constants import Constants
 from helpers.logger import Logger
 from models.llm_model_wrapper import LLMModelWrapper
@@ -25,7 +26,7 @@ class LocalLLMHelper:
         SFT where you might want to use right. https://github.com/huggingface/transformers/issues/34842#issuecomment-2528550342
         '''
         transformers.set_seed(42)
-        os.environ[Constants.CUDA_VISIBLE_DEVICES] = model_wrapper.CUDA_VISIBLE_DEVICES
+        self._initialize_env_variables()
         self._model_wrapper = model_wrapper
         self._model = ModelFactory.get_model(model_wrapper)
         self._tokenizer = ModelFactory.get_tokenizer(self._model_wrapper, self._model)
@@ -74,3 +75,7 @@ class LocalLLMHelper:
         except Exception as e:
             Logger.exception(f"Error in get_answer: {str(e)}")
             return Constants.DEFAULT_ANSWER
+        
+    @staticmethod
+    def _initialize_env_variables():
+        os.environ[Constants.CUDA_VISIBLE_DEVICES] = Config.CUDA_VISIBLE_DEVICES

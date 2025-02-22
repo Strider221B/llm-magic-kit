@@ -8,8 +8,6 @@ class BaseModel(LLMModelWrapper):
 
     Config.MODEL_TYPE = Constants.VLLM
 
-    TENSOR_PARALLEL_SIZE = 1 # means that the model itself is split across multiple GPUs.
-
     _MAX_TOKENS = 32768
     _MIN_CUMULATIVE_PROB_NUCLEUS_SAMPLING = 0.01
     _SKIP_SPECIAL_TOKENS = True
