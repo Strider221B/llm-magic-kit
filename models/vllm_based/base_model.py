@@ -8,7 +8,6 @@ class BaseModel(LLMModelWrapper):
 
     Config.MODEL_TYPE = Constants.VLLM
 
-    CUDA_VISIBLE_DEVICES = "0"
     TENSOR_PARALLEL_SIZE = 1 # means that the model itself is split across multiple GPUs.
 
     _MAX_TOKENS = 32768
@@ -17,7 +16,7 @@ class BaseModel(LLMModelWrapper):
     _TEMPERATURE = 1.0
 
     @classmethod
-    def get_model_response(cls, model, tokenizer, prompt: str) -> str:
+    def get_model_response(cls, model, tokenizer, question: str) -> str:
         from vllm import SamplingParams
 
         sampling_params = SamplingParams(
@@ -28,6 +27,7 @@ class BaseModel(LLMModelWrapper):
         )
 
         try:
+            prompt = Prompts.get_prompt(question)
             inputs = tokenizer.apply_chat_template(conversation=prompt,
                                                    tokenize=False,
                                                    add_generation_prompt=True)

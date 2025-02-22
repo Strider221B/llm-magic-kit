@@ -5,6 +5,7 @@ from helpers.constants import Constants
 from helpers.gpu_helper import GPUHelper
 from helpers.logger import Logger
 from models.llm_model_wrapper import LLMModelWrapper
+from models.prompts import Prompts
 
 class Phi(LLMModelWrapper):
 
@@ -12,8 +13,9 @@ class Phi(LLMModelWrapper):
     MODEL_PATH = f'{Config.BASE_PATH}/phi-2/pytorch/default/1'
 
     @staticmethod
-    def get_model_response(model, tokenizer, prompt: str) -> str:
+    def get_model_response(model, tokenizer, question: str) -> str:
         try:
+            prompt = Prompts.get_prompt_with_question_only(question)
             inputs = tokenizer(prompt, return_tensors="pt", padding=True).to(model.device)
             
             with torch.no_grad():
@@ -32,7 +34,7 @@ class Phi(LLMModelWrapper):
             
             response = tokenizer.decode(outputs[0], skip_special_tokens=True)
             GPUHelper.clean_memory()
-            return response
+            return response.removeprefix(prompt)
             
         except Exception as e:
             Logger.exception(f"Generation error: {str(e)}")

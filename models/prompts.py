@@ -1,6 +1,7 @@
 import random
 import re
 from collections import Counter
+from typing import Dict, List
 
 from helpers.constants import Constants
 from helpers.logger import Logger
@@ -11,31 +12,38 @@ class Prompts:
     _VALID_ANS_MAX = 1000
     _VALID_ANS_MIN = 0
 
-    @staticmethod
-    def get_prompt(question):
-        """Format the question with better prompts that encourage step-by-step reasoning"""
-        prompts = [
-            "Please use chained reasoning to solve this step by step and provide the answer as Answer=[number]. Stop at answer, do not generate follow ups after generating answers.",
-            "Please reflect and verify while reasoning, then provide the answer as Answer=[number]. Stop at answer, do not generate follow ups after generating answers.",
-            "Solve this problem using concise and clear reasoning, providing the answer as Answer=[number]. Stop at answer, do not generate follow ups after generating answers.",
-            "You are a helpful and reflective maths assistant. Please reason step by step and provide the answer as Answer=[number]. Stop at answer, do not generate follow ups after generating answers.",
-            "You are the smartest maths expert. Please solve this precisely and provide the answer as Answer=[number]. Stop at answer, do not generate follow ups after generating answers."
+    _SYSTEM_PROMPTS = ['Please use chained reasoning to solve this step by step and provide the answer as Answer=[number]. Stop at answer, do not generate follow ups after generating answers.',
+                       'Please reflect and verify while reasoning, then provide the answer as Answer=[number]. Stop at answer, do not generate follow ups after generating answers.',
+                       'Solve this problem using concise and clear reasoning, providing the answer as Answer=[number]. Stop at answer, do not generate follow ups after generating answers.',
+                       'You are a helpful and reflective maths assistant. Please reason step by step and provide the answer as Answer=[number]. Stop at answer, do not generate follow ups after generating answers.',
+                       'You are the smartest maths expert. Please solve this precisely and provide the answer as Answer=[number]. Stop at answer, do not generate follow ups after generating answers.']
+
+    @classmethod
+    def get_prompt(cls, question: str) -> List[Dict[str, str]]:
+        prompt = [
+            {"role": "system", "content": cls._get_random_system_prompt()},
+            {"role": "user", "content": question}
         ]
+        return prompt
+
+    @classmethod
+    def get_prompt_with_question_only(cls, question) -> str:
+        '''Format the question with better prompts that encourage step-by-step reasoning'''
         # Use random prompt or cycle through them
-        prompt = random.choice(prompts)
-        return f"{prompt}.\n Question: {question} \n Solution: Let's solve this step by step: "
+        prompt = cls._get_random_system_prompt()
+        return f'{prompt}.\n Question: {question} \n Solution: Let us solve this step by step: '
 
     @classmethod    
     def extract_answer(cls, response):
-        """More robust answer extraction"""
+        '''More robust answer extraction'''
         try:
             # Try multiple answer formats
-            if "Answer=" in response:
-                answer = response.split("Answer=")[-1].strip().split()[0]
-            elif "\\boxed{" in response:
-                answer = response.split("\\boxed{")[-1].split("}")[0]
-            elif "answer is" in response.lower():
-                text_after = response.lower().split("answer is")[-1]
+            if 'Answer=' in response:
+                answer = response.split('Answer=')[-1].strip().split()[0]
+            elif '\\boxed{' in response:
+                answer = response.split('\\boxed{')[-1].split('}')[0]
+            elif 'answer is' in response.lower():
+                text_after = response.lower().split('answer is')[-1]
                 numbers = re.findall(cls._REGEX_NUMBERS, text_after)
                 if numbers:
                     answer = numbers[0]
@@ -82,6 +90,10 @@ class Prompts:
                 for match in matches:
                     result.append(int(match)%1000)
         return result
+    
+    @classmethod
+    def _get_random_system_prompt(cls) -> str:
+        return random.choice(cls._SYSTEM_PROMPTS)
         
 if __name__ == '__main__':
     example_response = '''Solution: Let's solve this step by step: 
@@ -90,7 +102,7 @@ if __name__ == '__main__':
                             Answer: The answer is 2.
 
                             Follow-up exercises:
-                            1. What is the answer if we change the question to "What is 2+2?"?
+                            1. What is the answer if we change the question to 'What is 2+2?'?
                             Solution: The solution would be the same as the original question, which is 4.
                             2. Can you explain why the answer to the question is always the same, regardless of the numbers used?
                             3. How would you explain the concept of addition to someone who has never heard of it before? Provide a step-by-step explanation. 

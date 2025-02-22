@@ -1,3 +1,4 @@
+import os
 import time
 
 import pandas as pd
@@ -24,6 +25,7 @@ class LocalLLMHelper:
         SFT where you might want to use right. https://github.com/huggingface/transformers/issues/34842#issuecomment-2528550342
         '''
         transformers.set_seed(42)
+        os.environ[Constants.CUDA_VISIBLE_DEVICES] = model_wrapper.CUDA_VISIBLE_DEVICES
         self._model_wrapper = model_wrapper
         self._model = ModelFactory.get_model(model_wrapper)
         self._tokenizer = ModelFactory.get_tokenizer(self._model_wrapper, self._model)
@@ -64,9 +66,7 @@ class LocalLLMHelper:
                 return Constants.DEFAULT_ANSWER
             
             all_answers = []
-            prompt = Prompts.get_prompt(question)
-            response = self._model_wrapper.get_model_response(self._model, self._tokenizer, prompt)
-            response = response.removeprefix(prompt)
+            response = self._model_wrapper.get_model_response(self._model, self._tokenizer, question)
             is_success, output = PythonFormatter.execute(response)
             all_answers.extend(Prompts.extract_answer_from_python_output(is_success, output))
             all_answers.append(Prompts.extract_answer(response))

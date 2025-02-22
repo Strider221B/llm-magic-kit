@@ -15,8 +15,8 @@ class ModelFactory:
     @classmethod
     def get_model(cls, 
                   model_wrapper: BaseModel):
-        from vllm import LLM
         cls._initialize(model_wrapper)
+        from vllm import LLM
         return LLM(model_wrapper.MODEL_PATH,
                    max_model_len=cls._MAX_MODEL_LEN,         
                    trust_remote_code=cls._TRUST_REMOTE_CODE,     
@@ -26,11 +26,9 @@ class ModelFactory:
     @classmethod
     def get_tokenizer(cls,
                       llm_model = None):
-        
         return llm_model.get_tokenizer()
     
     @classmethod
     def _initialize(cls, model: BaseModel):
-        os.environ[Constants.CUDA_VISIBLE_DEVICES] = model.CUDA_VISIBLE_DEVICES
         os.environ[cls._TOKENIZERS_PARALLELISM] = "false"
         os.environ[cls._VLLM_CUDA_MULTIPROCESSING_METHOD] = cls._MULTI_PROCESSING_SPAWN
