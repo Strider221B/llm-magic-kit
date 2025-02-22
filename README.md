@@ -1,4 +1,4 @@
-# kaggle_ai_olympiad_2025_01
+# LLM Magic Kit
 
 Terminal command line steps for uploading code as a dataset:  
 rm -r ~/temp/kaggle_model_staging/llm_utilities/*  
