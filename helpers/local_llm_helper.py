@@ -16,8 +16,6 @@ from models.model_factory import ModelFactory
 
 class LocalLLMHelper:
 
-    _CUTOFF_TIME = time.time() + (4 * 60 + 45) * 60  # 4h45m timeout
-
     def __init__(self, 
                  model_wrapper: LLMModelWrapper):
         '''
@@ -62,7 +60,7 @@ class LocalLLMHelper:
         """Complete pipeline with error handling and timeout."""
         try:
             # First check if we've exceeded the time limit
-            if time.time() > self._CUTOFF_TIME:
+            if time.time() > Config.CUTOFF_TIME:
                 print("Time limit exceeded, returning default answer")
                 return Constants.DEFAULT_ANSWER
             

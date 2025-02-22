@@ -12,8 +12,8 @@ class Phi(LLMModelWrapper):
     Config.MODEL_TYPE = Constants.TRANSFORMERS
     MODEL_PATH = f'{Config.BASE_PATH}/phi-2/pytorch/default/1'
 
-    @staticmethod
-    def get_model_response(model, tokenizer, question: str) -> str:
+    @classmethod
+    def get_model_response(cls, model, tokenizer, question: str) -> str:
         try:
             prompt = Prompts.get_prompt_with_question_only(question)
             inputs = tokenizer(prompt, return_tensors="pt", padding=True).to(model.device)
@@ -21,7 +21,7 @@ class Phi(LLMModelWrapper):
             with torch.no_grad():
                 outputs = model.generate(
                     **inputs,
-                    max_length=4096,  # Increased for complex problems
+                    max_length=cls._get_max_token(),  # Increased for complex problems
                     temperature=0.7,  # More diverse solutions
                     num_beams=5,     # Increased beam search
                     top_p=0.95,      # Slightly higher nucleus sampling

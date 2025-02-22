@@ -8,7 +8,6 @@ class BaseModel(LLMModelWrapper):
 
     Config.MODEL_TYPE = Constants.VLLM
 
-    _MAX_TOKENS = 32768
     _MIN_CUMULATIVE_PROB_NUCLEUS_SAMPLING = 0.01
     _SKIP_SPECIAL_TOKENS = True
     _TEMPERATURE = 1.0
@@ -21,7 +20,7 @@ class BaseModel(LLMModelWrapper):
             temperature=cls._TEMPERATURE,                    # Controls randomness in generation: higher values (e.g., 1.0) produce more diverse output.
             min_p=cls._MIN_CUMULATIVE_PROB_NUCLEUS_SAMPLING, # Minimum cumulative probability for nucleus sampling, filtering out unlikely tokens.
             skip_special_tokens=cls._SKIP_SPECIAL_TOKENS,     
-            max_tokens=cls._MAX_TOKENS,                      # Sets a very high limit for token generation to handle longer outputs.
+            max_tokens=cls._get_max_token(),                 # Sets a very high limit for token generation to handle longer outputs.
         )
 
         try:
