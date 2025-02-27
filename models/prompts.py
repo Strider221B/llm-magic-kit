@@ -56,6 +56,7 @@ class Prompts:
                     return Constants.DEFAULT_ANSWER
                     
             # Handle negative numbers and convert to int modulo 1000
+            answer = cls._extract_number_from(answer)
             value = float(answer)
             if value < 0:
                 value = abs(value)
@@ -94,6 +95,10 @@ class Prompts:
     @classmethod
     def _get_random_system_prompt(cls) -> str:
         return random.choice(cls._SYSTEM_PROMPTS)
+    
+    @staticmethod
+    def _extract_number_from(string):
+        return re.sub(r'\D', '', string)
         
 if __name__ == '__main__':
     example_response = '''Solution: Let's solve this step by step: 
