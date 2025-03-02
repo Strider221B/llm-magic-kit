@@ -5,9 +5,14 @@ from helpers.config import Config
 
 class LLMModelWrapper(ABC):
 
-    MODEL_PATH = ''
     PAD_TOKEN = '</s>'
     PADDING_SIDE = 'left'
+
+    _MODEL_PATH = ''
+
+    @classmethod
+    def get_model_path(cls) -> str:
+        return f'{Config.BASE_PATH}{cls._MODEL_PATH}'
 
     @staticmethod
     def get_model_response(model, tokenizer, prompt: str) -> str:

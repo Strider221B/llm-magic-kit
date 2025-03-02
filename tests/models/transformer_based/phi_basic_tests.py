@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from helpers.constants import Constants
-from models.transformer_based.phi_basic import Phi
+from models.transformer_based.models import Phi
 
 class TestPhi(unittest.TestCase):
 

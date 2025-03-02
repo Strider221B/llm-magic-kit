@@ -17,7 +17,7 @@ class ModelFactory:
     def get_model(cls, 
                   model_wrapper: LLMModelWrapper):
         model = AutoModelForCausalLM.from_pretrained(
-                model_wrapper.MODEL_PATH,
+                model_wrapper.get_model_path(),
                 device_map=cls._DEVICE_MAP,
                 torch_dtype=Config.TORCH_DTYPE,
                 trust_remote_code=cls._TRUST_REMOTE_CODE,
@@ -36,7 +36,7 @@ class ModelFactory:
                       model_wrapper: LLMModelWrapper) -> PreTrainedTokenizer:
         
         tokenizer = AutoTokenizer.from_pretrained(
-                model_wrapper.MODEL_PATH,
+                model_wrapper.get_model_path(),
                 trust_remote_code=cls._TRUST_REMOTE_CODE,
                 local_files_only=cls._LOCAL_FILES_ONLY,
                 pad_token=model_wrapper.PAD_TOKEN,

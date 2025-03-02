@@ -16,7 +16,7 @@ class ModelFactory:
                   model_wrapper: BaseModel):
         cls._initialize(model_wrapper)
         from vllm import LLM
-        return LLM(model_wrapper.MODEL_PATH,
+        return LLM(model_wrapper.get_model_path(),
                    max_model_len=Config.MAX_MODEL_LEN,         
                    trust_remote_code=cls._TRUST_REMOTE_CODE,     
                    tensor_parallel_size=Config.TENSOR_PARALLEL_SIZE,      

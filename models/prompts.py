@@ -12,11 +12,9 @@ class Prompts:
     _VALID_ANS_MAX = 1000
     _VALID_ANS_MIN = 0
 
-    _SYSTEM_PROMPTS = ['Please use chained reasoning to solve this step by step and provide the answer as Answer=[number]. Stop at answer, do not generate follow ups after generating answers.',
-                       'Please reflect and verify while reasoning, then provide the answer as Answer=[number]. Stop at answer, do not generate follow ups after generating answers.',
-                       'Solve this problem using concise and clear reasoning, providing the answer as Answer=[number]. Stop at answer, do not generate follow ups after generating answers.',
-                       'You are a helpful and reflective maths assistant. Please reason step by step and provide the answer as Answer=[number]. Stop at answer, do not generate follow ups after generating answers.',
-                       'You are the smartest maths expert. Please solve this precisely and provide the answer as Answer=[number]. Stop at answer, do not generate follow ups after generating answers.']
+    _SYSTEM_PROMPTS = [('You are the smartest maths expert. Given this problem please use chained reasoning to solve this step by step. '
+                        'See if you can also generate a Python code to get to the solution. Use sympy and numpy library if it will help. '
+                        'Provide the answer as Answer=[number]. Stop at answer, do not generate follow ups after generating answers.')]
 
     @classmethod
     def get_prompt(cls, question: str) -> List[Dict[str, str]]:

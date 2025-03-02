@@ -7,10 +7,9 @@ from helpers.logger import Logger
 from models.llm_model_wrapper import LLMModelWrapper
 from models.prompts import Prompts
 
-class Phi(LLMModelWrapper):
+class BaseModel(LLMModelWrapper):
 
     Config.MODEL_TYPE = Constants.TRANSFORMERS
-    MODEL_PATH = f'{Config.BASE_PATH}/phi-2/pytorch/default/1'
 
     @classmethod
     def get_model_response(cls, model, tokenizer, question: str) -> str:
